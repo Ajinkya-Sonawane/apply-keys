@@ -7,7 +7,7 @@ Keyboard for applying jobs while on the go from your phone.
 
 | Folder | What it is |
 | --- | --- |
-| `ApplyKeysCore/` | Swift package with all the logic: `SnippetStore` (add/edit/delete/reorder, persisted as JSON) and `KeyboardController` (panel state and key handling). Fully tested. |
+| `ApplyKeysCore/` | Swift package with all the logic: `SnippetStore` (add/edit/delete/reorder, persisted as JSON), `KeyboardController` (panel state and key handling) and `SnippetSuggestion` (common application fields offered when adding a snippet). Also holds the shared pastel Material 3 palette. Fully tested. |
 | `ApplyKeys/` | SwiftUI companion app for managing snippets in the Me / Links / Answers tabs, plus setup instructions. |
 | `Keyboard/` | The keyboard extension: a snippet panel with 🌐, space, ⌫ and ⏎. |
 | `Config/` | Keyboard Info.plist and App Group entitlements. |
