@@ -1,44 +1,56 @@
+import ApplyKeysCore
 import SwiftUI
 
 struct SetupView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.palette) private var palette
 
     var body: some View {
-        NavigationStack {
-            List {
-                Section("Turn on the keyboard") {
-                    Step(1, "Open Settings → General → Keyboard → Keyboards.")
-                    Step(2, "Tap Add New Keyboard… and choose ApplyKeys.")
-                    Step(3, "Tap ApplyKeys and turn on Allow Full Access.")
-                }
-                Section("Use it") {
-                    Step(4, "In any application form, hold or tap 🌐 to switch to ApplyKeys.")
-                    Step(5, "Pick a tab and tap a snippet to insert it. Tap 🌐 again to go back.")
-                }
-                Section {
+        VStack(spacing: 0) {
+            SheetBar(title: "Setup", close: { dismiss() }) {}
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    card("Turn on the keyboard") {
+                        Step(1, "Open Settings → General → Keyboard → Keyboards.")
+                        Step(2, "Tap Add New Keyboard… and choose ApplyKeys.")
+                        Step(3, "Tap ApplyKeys and turn on Allow Full Access.")
+                    }
+                    card("Use it") {
+                        Step(4, "In any application form, hold or tap 🌐 to switch to ApplyKeys.")
+                        Step(5, "Pick a tab and tap a snippet to insert it. Tap 🌐 again to go back.")
+                    }
                     Text("Full Access lets the keyboard read the snippets you save here. ApplyKeys has no network code: your details stay on this iPhone.")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                }
-                Section {
+                        .font(.m3BodyMedium)
+                        .foregroundStyle(palette.onSurfaceVariant)
                     Button("Open Settings") {
                         if let url = URL(string: UIApplication.openSettingsURLString) {
                             UIApplication.shared.open(url)
                         }
                     }
+                    .buttonStyle(TonalButtonStyle())
                 }
-            }
-            .navigationTitle("Setup")
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
-                }
+                .padding(16)
             }
         }
+        .background(palette.surface.ignoresSafeArea())
+    }
+
+    private func card(_ title: String, @ViewBuilder steps: () -> some View) -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text(title)
+                .font(.m3TitleMedium)
+                .foregroundStyle(palette.onSurface)
+            steps()
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(palette.surfaceContainer, in: RoundedRectangle(cornerRadius: Corner.medium))
     }
 }
 
 private struct Step: View {
+    @Environment(\.palette) private var palette
+
     let number: Int
     let text: String
 
@@ -48,10 +60,16 @@ private struct Step: View {
     }
 
     var body: some View {
-        Label {
+        HStack(alignment: .top, spacing: 16) {
+            Text("\(number)")
+                .font(.m3LabelLarge)
+                .foregroundStyle(palette.onPrimaryContainer)
+                .frame(width: 28, height: 28)
+                .background(palette.primaryContainer, in: Circle())
             Text(text)
-        } icon: {
-            Text("\(number)").font(.headline)
+                .font(.m3BodyLarge)
+                .foregroundStyle(palette.onSurface)
+                .padding(.top, 4)
         }
     }
 }

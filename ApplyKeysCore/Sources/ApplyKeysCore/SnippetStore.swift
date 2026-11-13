@@ -27,6 +27,12 @@ public final class SnippetStore {
         all.filter { $0.tab == tab }
     }
 
+    /// Common application fields for a tab that the user hasn't already saved a snippet for.
+    public func suggestions(for tab: SnippetTab) -> [SnippetSuggestion] {
+        let used = Set(snippets(in: tab).map { $0.label.lowercased() })
+        return SnippetSuggestion.all.filter { $0.tab == tab && !used.contains($0.label.lowercased()) }
+    }
+
     @discardableResult
     public func add(to tab: SnippetTab, label: String, value: String) throws -> Snippet {
         let snippet = Snippet(tab: tab, label: try Self.validLabel(label), value: try Self.validValue(value))

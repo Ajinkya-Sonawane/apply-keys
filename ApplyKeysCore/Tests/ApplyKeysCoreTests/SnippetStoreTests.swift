@@ -143,6 +143,28 @@ struct SnippetStoreTests {
         #expect(reopened.all == store.all)
     }
 
+    @Test func everyTabSuggestsCommonFields() throws {
+        let store = try emptyStore()
+
+        #expect(store.suggestions(for: .me).map(\.label).contains("First name"))
+        #expect(store.suggestions(for: .links).map(\.label).contains("Portfolio"))
+        #expect(store.suggestions(for: .answers).map(\.label).contains("Work authorization"))
+        for tab in SnippetTab.allCases {
+            #expect(store.suggestions(for: tab).allSatisfy { $0.tab == tab && !$0.hint.isEmpty })
+        }
+    }
+
+    @Test func suggestionsSkipFieldsAlreadySaved() throws {
+        let store = try emptyStore()
+        try store.add(to: .links, label: "github", value: "https://github.com/me")
+        try store.add(to: .me, label: "Portfolio", value: "not a link")
+
+        let links = store.suggestions(for: .links).map(\.label)
+
+        #expect(!links.contains("GitHub"))
+        #expect(links.contains("Portfolio"))
+    }
+
     private func emptyStore() throws -> SnippetStore {
         let store = SnippetStore(storage: InMemoryStorage(data: Data("[]".utf8)))
         try store.load()
